@@ -1,0 +1,245 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+' =========================================================
+' PAQUETE: com.example.Carta
+' =========================================================
+
+package "com.example.Carta" {
+
+    enum Palo {
+        TREBOL
+        DIAMANTE
+        CORAZON
+        PICA
+
+        - peso : int
+        - figura : String
+        - color : String
+
+        + getPeso() : int
+        + getFigura() : String
+        + getColor() : String
+    }
+
+
+    abstract class Carta {
+        - valor : int
+        # palo : Palo
+        - color : String
+        - valorBajo : int
+        - faceup : boolean
+
+        + Carta(valor : int, palo : Palo, color : String)
+
+        + makeFaceDown() : void
+        + makeFaceUp() : void
+        + isFaceup() : boolean
+        + toString() : String
+
+        + tieneElMismoValor(carta : Carta) : boolean
+        + tieneElMismoPalo(palo : Palo) : boolean
+        + esLaSiguiente(carta : Carta) : boolean
+
+        + getValor() : int
+        + setValor(valor : int) : void
+        + getPalo() : Palo
+        + getColor() : String
+        + getValorBajo() : int
+
+        + compareTo(carta : Carta) : int
+    }
+
+
+    class CartaInglesa {
+        + CartaInglesa(valor : int, figura : Palo, color : String)
+        + compareTo(o : Carta) : int
+    }
+
+
+    class Mazo {
+        - cartas : ArrayList~CartaInglesa~
+
+        + Mazo()
+        + getCartas() : ArrayList~CartaInglesa~
+        + obtenerUnaCarta() : CartaInglesa
+        - mezclar() : void
+        - llenar() : void
+        + ordenar() : void
+        + toString() : String
+    }
+
+
+    Carta <|-- CartaInglesa
+
+    Carta --> Palo : tiene
+    Mazo *-- "0..*" CartaInglesa : contiene
+    Mazo --> Palo : utiliza
+}
+
+
+' =========================================================
+' PAQUETE: com.example.Juego
+' =========================================================
+
+package "com.example.Juego" {
+
+    class Jugador {
+        - nombre : String
+        - estadoJuego : boolean
+        - mano : ArrayList~Carta~
+        - sumaMano : int
+
+        + Jugador()
+        + Jugador(nombre : String, estadoJuego : boolean, sumaMano : int)
+
+        + getNombre() : String
+        + isEstadoJuego() : boolean
+        + getMano() : ArrayList~Carta~
+        + getSumaMano() : int
+
+        + setNombre(nombre : String) : void
+        + setEstadoJuego(estadoJuego : boolean) : void
+        + setSumaMano(sumaMano : int) : void
+    }
+
+
+    class Partida {
+        - vista : Vista
+        - jugadores : ArrayList~Jugador~
+        - dealer : Jugador
+        - mazo : Mazo
+
+        + Partida(vista : Vista, mazo : Mazo)
+        + Partida(mazo : Mazo)
+
+        + getMazo() : Mazo
+        + getJugadores() : ArrayList~Jugador~
+        + getDealer() : Jugador
+
+        + crearJugadores(nombres : ArrayList~String~) : void
+        + crearJugadores() : void
+        + asignarCartas() : void
+        + partidaJuego() : void
+
+        + sumarValoresManoJugador(manoJ : ArrayList~Carta~, j : Jugador) : void
+        + sumarManoDealer(manoD : ArrayList~Carta~, dealer : Jugador) : void
+        + comprobarGanador(j : Jugador, d : Jugador) : void
+        + obtenerCadenaEstado(j : Jugador, d : Jugador) : String
+        + dealerMenor17(manoD : ArrayList~Carta~, d : Jugador) : void
+    }
+
+
+    Jugador *-- "0..*" Carta : mano
+
+    Partida o-- "1..*" Jugador : jugadores
+    Partida --> "1" Jugador : dealer
+    Partida --> Mazo : utiliza
+    Partida --> Vista : utiliza
+}
+
+
+' =========================================================
+' PAQUETE: com.example.Vista
+' =========================================================
+
+package "com.example.Vista" {
+
+    class Vista {
+        - sc : Scanner
+
+        + menuInicial() : int
+        + elejirMovimiento(j : Jugador) : int
+        + registrarNombre() : String
+        + mensajeDespedida() : void
+        + mostrarCartas(jd : Jugador, n : int) : void
+        + solicitarNumJugadores() : int
+        + mensajeTurnoDealer() : void
+    }
+
+    Vista --> Jugador : utiliza
+    Vista --> Carta : muestra
+}
+
+
+' =========================================================
+' PAQUETE: com.example.Controlador
+' =========================================================
+
+package "com.example.Controlador" {
+
+    class Controlador {
+        - vista : Vista
+
+        + Controlador(vista : Vista)
+        + obtenerModoJuego() : void
+        + juegoEnTerminal() : void
+    }
+
+    Controlador --> Vista : utiliza
+    Controlador --> Mazo : crea
+    Controlador --> Partida : crea
+}
+
+
+' =========================================================
+' PAQUETE: com.example.ayed_practica1
+' =========================================================
+
+package "com.example.ayed_practica1" {
+
+    class Componentes {
+        {static} + crearBoton(texto : String, x : double, y : double) : Button
+        {static} + crearLabel40(texto : String, x : double, y : double) : Label
+        {static} + crearLabel20(texto : String, x : double, y : double) : Label
+        {static} + crearPanel(x : int, y : int, width : double, height : double) : Pane
+        {static} + crearTextField(x : int) : TextField
+    }
+
+
+    class HelloApplication {
+        + start(stage : Stage) : void
+        + main(args : String[]) : void
+    }
+
+
+    class JuegoGrafico {
+        - partida : Partida
+        - escena : Scene
+        - panelJuego : Pane
+        - jugadorActual : int
+        - panelJugador : Pane
+        - panelDealer : Pane
+        - panelResultados : Pane
+
+        + JuegoGrafico(partida : Partida, escena : Scene)
+        + mostrarJuego() : void
+        - crearCartaVisual(carta : Carta, x : double, y : double, panel : Pane) : void
+        - mostrarJugadorActual() : void
+        - mostrarTurnoDealer() : void
+        - mostrarResultados() : void
+    }
+
+
+    HelloApplication --|> Application
+
+    HelloApplication --> Componentes : utiliza
+    HelloApplication --> Mazo : crea
+    HelloApplication --> Partida : crea
+    HelloApplication --> JuegoGrafico : crea
+
+    JuegoGrafico --> Partida : utiliza
+    JuegoGrafico --> Jugador : utiliza
+    JuegoGrafico --> Carta : muestra
+    JuegoGrafico --> Componentes : utiliza
+}
+
+
+' =========================================================
+' RELACIONES PRINCIPALES
+' =========================================================
+
+@enduml
