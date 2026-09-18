@@ -1,10 +1,14 @@
 package com.example.Juego;
 import com.example.Carta.Carta;
 import com.example.Carta.Mazo;
+import com.example.Pilas.Pila;
 import com.example.Vista.Vista;
 import java.util.ArrayList;
 
 public class Partida {
+    //Primer cambio de la practica 2
+    Pila<Jugador> pilaJugadores= new Pila<>(4);
+
     private Vista vista;
     private ArrayList<Jugador> jugadores;
     private Jugador dealer;
@@ -42,6 +46,8 @@ public class Partida {
         dealer = new Jugador("Dealer", false,0);
     }
 
+
+
     //Este metodo fue para el juego en terminal
     public void crearJugadores(){
         int numJugadores = vista.solicitarNumJugadores();
@@ -63,6 +69,8 @@ public class Partida {
                 //makeFaceUp es para hacerlas visibles para los jugadores
                 carta.makeFaceUp();
                 jugador.getMano().add(carta);
+                //ahora se utiliza la pila y su metodo  push para asignar la carta
+                //jugador.getManoCartas().push(carta);
             }
         }
         // Repartir 2 cartas al dealer
@@ -76,6 +84,8 @@ public class Partida {
                 carta.makeFaceUp();
             }
             dealer.getMano().add(carta);
+            //Para el dealer tambien se utiliza la pila y el metodo push
+            dealer.getManoCartas().push(carta);
         }
     }//fin del metodo
 
@@ -85,6 +95,8 @@ public class Partida {
 
         for (Jugador jugador : jugadores) {
             System.out.println("\nTurno de " + jugador.getNombre());
+            //Este va en la prac2
+            //sumarValoresManoJugador(jugador.getManocartas(),jugador);
             sumarValoresManoJugador(jugador.getMano(),jugador);
             boolean jugadorPlantado= false;
 
@@ -92,6 +104,8 @@ public class Partida {
             //controladdo por la variable booleana que se actualizara dependiendo del caso
             while(!jugadorPlantado) {
                 vista.mostrarCartas(jugador,1);
+                System.out.println("\n======================\n");
+                vista.mostrarCartas(dealer,2);
                 // Si tiene 21 se planta automáticamente
                 if(jugador.getSumaMano()== 21){
                     System.out.println("Tienes 21");
@@ -109,17 +123,38 @@ public class Partida {
                 if (elegirMov==1){
                     Carta nuevaCarta = mazo.obtenerUnaCarta();
                     nuevaCarta.makeFaceUp();
+
+                    //esta linea va para la practica 2
+                    //jugador.getManoCartas().push(nuevaCarta);
                     jugador.getMano().add(nuevaCarta);
                     sumarValoresManoJugador(jugador.getMano(),jugador);
+                    //Este metodo va para la practica 2
+                    //sumarManoJugadores(jugador.getManoCartas(),jugador);
                 } else{
                     System.out.println(jugador.getNombre() + " se planta.");
-                    //plantarcartas(jugador.getMano());
                     jugadorPlantado = true;
                 }
             }
         }
         //a partir de aqui comienza la logica del dealer
         vista.mensajeTurnoDealer();
+
+        /*
+        ========================
+        Estos dos ciclos van ahora en la practica 2, son para voltear las cartas
+        Pila<Carta> pilaCartasDealerAux=new Pila<>();
+
+        while(!dealer.getManoCartas().pilaVacia()){
+            Carta c=dealer.getManoCartas().pop();
+            c.makeFaceUp();
+            pilaCartasDealerAux.push(c);
+        }
+        while (!pilaCartasDealerAux.pilaVacia()){
+            dealer.getManoCartas().push(pilaCartasDealerAux.pop());
+        }
+
+         */
+
         //Este ciclo voltea las cartas del dealer
         for (Carta c : dealer.getMano()) {
             c.makeFaceUp();
@@ -127,13 +162,17 @@ public class Partida {
 
         //Aqui se muestran las cartas del dealer
         vista.mostrarCartas(dealer,2);
-        sumarManoDealer(dealer.getMano(),dealer);
-
+        sumarValoresManoJugador(dealer.getMano(),dealer);
+        //Este metodo va ahora en la practica 2
+        //sumarManoJugadores(dealer.getManoCartas(),dealer);
         System.out.println("Valor inicial del dealer: " + dealer.getSumaMano());
+
+
         dealerMenor17(dealer.getMano(), dealer);
         System.out.println("\nCartas finales del dealer:");
         vista.mostrarCartas(dealer,2);
-        sumarManoDealer(dealer.getMano(),dealer);
+        sumarValoresManoJugador(dealer.getMano(),dealer);
+        //sumaManoJugadores(dealer.getManoCartas(),dealer);
         System.out.println("Valor final del dealer: "+ dealer.getSumaMano());
 
         for (Jugador jugador : jugadores) {
@@ -170,29 +209,7 @@ public class Partida {
         j.setSumaMano(suma);
     }
 
-    public void sumarManoDealer(ArrayList<Carta> manoD,Jugador dealer) {
-        int suma =0;
-        int cantidadAses =0;
-        for (Carta c : manoD) {
-            int valor = c.getValor();
-            if (valor == 11 || valor == 12 || valor == 13) {
-                suma += 10;
-            }
-            else if (valor == 14) {
-                suma += c.getValorBajo();
-                cantidadAses++;
-            }
-            else {
-                suma += valor;
-            }
-        }
-        for (int x=0;x<cantidadAses; x++) {
-            if (suma + 10 <= 21) {
-                suma += 10;
-            }
-        }
-        dealer.setSumaMano(suma);
-    }
+
 
     //Compara la mano del jugador con la del dealer
     public void comprobarGanador(Jugador j,Jugador d){
@@ -238,9 +255,60 @@ public class Partida {
         while (d.getSumaMano() <17){
             Carta nuevaCarta= mazo.obtenerUnaCarta();
             nuevaCarta.makeFaceUp();
+            //d.getManoCartas.push(nuevaCarta);
             d.getMano().add(nuevaCarta);
-            sumarManoDealer(d.getMano(),d);
+
+            //sumaManoJugadores(d.getManoCartas(),d);
+            sumarValoresManoJugador(d.getMano(),d);
         }
+    }
+
+    public void dealerMenor17(Jugador d) {
+        while (d.getSumaMano() <17){
+            Carta nuevaCarta= mazo.obtenerUnaCarta();
+            nuevaCarta.makeFaceUp();
+            d.getManoCartas().push(nuevaCarta);
+            sumarManoJugadores(d.getManoCartas(),d);
+        }
+    }
+
+
+    public void sumarManoJugadores(Pila<Carta> pilaCartas, Jugador j) {
+        int suma = 0;
+        int cantidadAses = 0;
+        //El metodo de sumar mano se actualiza, ahora este en vez de recorrer con un ciclo el arreglo
+        //se maneja mediante el metodo pop de la pila.
+        Pila<Carta> pilaAux = new Pila<>();
+        while (!pilaCartas.pilaVacia()) {
+            Carta carta=pilaCartas.pop();
+            pilaAux.push(carta);
+            int valor = carta.getValor();
+            //Las cartas J, Q y K valen 10.
+            if (valor == 11 || valor == 12 || valor == 13) {
+                suma += 10;
+            }
+            // El As se cuenta inicialmente como 1.
+            else if (valor == 14) {
+                suma += carta.getValorBajo();
+                cantidadAses++;
+            } else {
+                suma += valor;
+            }
+        }
+
+        //Aqui se comprueba cual valor es mejor para el valor del as, originalmente vale 1, y puede
+        //valer 11 tambien, por lo que si a la suma se le suman los 10 restantes y el resultado es menor a 21,
+        //el as se toma como 11 entonces
+        for (int x = 0; x < cantidadAses; x++) {
+            if (suma + 10 <= 21) {
+                suma += 10;
+            }
+        }
+
+        while(!pilaAux.pilaVacia()){
+            pilaCartas.push(pilaAux.pop());
+        }
+        j.setSumaMano(suma);
     }
 
 }

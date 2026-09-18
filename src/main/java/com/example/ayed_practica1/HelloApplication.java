@@ -90,7 +90,9 @@ public class HelloApplication extends Application {
                     }
                     Mazo mazo = new Mazo();
                     Partida partida = new Partida(null, mazo);
+
                     partida.crearJugadores(nombres);
+                    //este se debe cambiar
                     partida.asignarCartas();
                     JuegoGrafico juegoGrafico = new JuegoGrafico(partida,escena);
                     juegoGrafico.mostrarJuego();

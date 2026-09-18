@@ -2,6 +2,7 @@ package com.example.Vista;
 
 import com.example.Carta.Carta;
 import com.example.Juego.Jugador;
+import com.example.Pilas.Pila;
 
 import java.util.*;
 public class Vista {
@@ -61,6 +62,30 @@ public class Vista {
             for (Carta c : jd.getMano()) {
                 System.out.println(c);
             }
+        }
+    }//fin del metodo
+
+    //Metodo actualizado para uso con pilas
+    public void mostrarCartas(Pila<Carta> pilaC, Jugador jd, int n) {
+        Pila<Carta> pila=new Pila<>();
+        if(n == 1){
+            System.out.println(jd.getNombre() + " estas son tus cartas: ");
+            while(!jd.getManoCartas().pilaVacia()){
+                Carta c=jd.getManoCartas().pop();
+                System.out.println(c);
+                pila.push(c);
+            }
+            System.out.println("\nValor de tu mano: " + jd.getSumaMano());
+        }else {
+            System.out.println("Cartas del dealer:");
+            while(!jd.getManoCartas().pilaVacia()){
+                Carta c=jd.getManoCartas().pop();
+                System.out.println(c);
+                pila.push(c);
+            }
+        }
+        while(!pila.pilaVacia()){
+            jd.getManoCartas().push(pila.pop());
         }
     }//fin del metodo
 

@@ -2,6 +2,7 @@ package com.example.ayed_practica1;
 import com.example.Carta.Carta;
 import com.example.Juego.Partida;
 import com.example.Juego.Jugador;
+import com.example.Pilas.Pila;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Rectangle;
@@ -44,6 +45,20 @@ public class JuegoGrafico {
         panelDealer = Componentes.crearPanel(0, 120, 1000, 180);
         panelJuego.getChildren().add(panelDealer);
         double posicionX = 300;
+
+        /*
+        Pila<Carta> pilaDeCartas=new Pila<>();
+        while(!partida.getDealer().getManoCartas().pilaVacia()){
+            Carta c=partida.getDealer().getManoCartas().pop();
+            crearCartaVisual(c,posicionX,20,panelDealer);
+            pilaDeCartas.push(c);
+        }
+        while(!pilaDeCartas.pilaVacia()){
+            Carta c=pilaDeCartas.pop();
+            partida.getDealer().getManoCartas().push(c);
+        }
+        */
+
         for (Carta carta : partida.getDealer().getMano()) {
             crearCartaVisual(carta, posicionX, 20, panelDealer);
             posicionX += 90;
@@ -80,6 +95,17 @@ public class JuegoGrafico {
         panelJugador.getChildren().add(valorMano);
         panelJugador.getChildren().add(nombreJugador);
         double posicionJugadorX = 100;
+        /*
+        Pila<Carta> pilaCartasJ=new Pila<>();
+        while(!jugador.getManoCartas().pilaVacia()){
+            Carta c=jugador.getManoCartas().pop();
+            crearCartaVisual(c,posicionJugadorX,60,panelJugador);
+            pilaCartasJ.push(c);
+        }
+        while(!pilaCartasJ.pilaVacia()){
+            jugador.getManoCartas().push(pilaCartasJ.pop());
+        }
+        */
         for (Carta carta : jugador.getMano()) {
             crearCartaVisual(carta, posicionJugadorX, 60, panelJugador);
             posicionJugadorX += 90;
@@ -91,15 +117,18 @@ public class JuegoGrafico {
         panelJugador.getChildren().add(botonPlantarse);
 
         botonTomarCarta.setOnAction(e -> {
+            //partida.sumaManoJugadores(jugador.getManoCartas(),jugador);
             partida.sumarValoresManoJugador(jugador.getMano(), jugador);
             if (jugador.getSumaMano() < 21) {
                 Carta nuevaCarta = partida.getMazo().obtenerUnaCarta();
                 nuevaCarta.makeFaceUp();
+                //jugador.getManoCartas.push(nuevaCarta);
                 jugador.getMano().add(nuevaCarta);
+                //partida.sumaManoJugadores(jugador.getManoCartas(),jugador);
                 partida.sumarValoresManoJugador(jugador.getMano(), jugador);
                 valorMano.setText("Valor de la mano: " + jugador.getSumaMano());
                 double posicionXX = 100 + ((jugador.getMano().size() - 1) * 90);
-
+                //double posicionXX = 100 + ((jugador.getManoCartas().getTope() - 1) * 90);
                 crearCartaVisual(nuevaCarta, posicionXX, 60, panelJugador);
             } else {
                 botonTomarCarta.setDisable(true);
@@ -118,19 +147,44 @@ public class JuegoGrafico {
     }
 
     private void mostrarTurnoDealer() {
+
+        Pila<Carta> pilaCartasDealerAux=new Pila<>();
+        /*
+        while(!partida.getDealer().getManoCartas().pilaVacia()){
+            Carta c=partida.getDealer().getManoCartas().pop();
+            c.makeFaceUp();
+            pilaCartasDealerAux.push(c);
+        }
+        while(!pilaCartasDealerAux.pilaVacia()){
+            partida.getDealer().getManoCartas().push(pilaCartasDealerAux.pop());
+        }
+        */
         for (Carta carta : partida.getDealer().getMano()) {
             carta.makeFaceUp();
         }
         int valorDealer = 0;
-        partida.sumarManoDealer(partida.getDealer().getMano(), partida.getDealer());
+        //partida.sumarManoJugadores(partida.getDealer().getManoCartas(),partida.getDealer());
+        partida.sumarValoresManoJugador(partida.getDealer().getMano(), partida.getDealer());
         System.out.println("Valor del dealer: " + partida.getDealer().getSumaMano());
+
         System.out.println(partida.getDealer().getMano());
 
         //System.out.println("Valor del dealer: " + valorDealer);
         partida.dealerMenor17(partida.getDealer().getMano(), partida.getDealer());
-
         panelDealer.getChildren().clear();
         double posicionX = 300;
+        /*
+        while(!partida.getDealer().getManoCartas().pilaVacia()){
+            Carta c=partida.getDealer().getManoCartas().pop();
+            crearCartaVisual(c,posicionX,20,panelDealer);
+            pilaCartasDealerAux.push(c);
+            posicionX+=90;
+        }
+
+        while(!pilaCartasDealerAux.pilaVacia()){
+            partida.getDealer().getManoCartas().push(pilaCartasDealerAux.pop());
+        }*/
+
         for (Carta carta : partida.getDealer().getMano()) {
             crearCartaVisual(carta, posicionX, 20, panelDealer);
             posicionX += 90;
@@ -148,12 +202,15 @@ public class JuegoGrafico {
         double posicionY = 120;
 
         for (Jugador jugador : partida.getJugadores()) {
+            //partida.sumarManoJugadores(jugador.getManoCartas(),jugador);
+            //partida.sumarManoJugadores(partida.getDealer().getManoCartas(),partida.getDealer());
             partida.sumarValoresManoJugador(jugador.getMano(),jugador);
-            partida.sumarManoDealer(partida.getDealer().getMano(),partida.getDealer());
+            partida.sumarValoresManoJugador(partida.getDealer().getMano(),partida.getDealer());
             String cad = partida.obtenerCadenaEstado(jugador, partida.getDealer());
             Label nombreJugador = Componentes.crearLabel20(jugador.getNombre(), 150, posicionY);
             panelResultados.getChildren().add(nombreJugador);
 
+            //partida.sumarManoJugadores(jugador.getManoCartas(),jugador);
             partida.sumarValoresManoJugador(jugador.getMano(), jugador);
             Label valor = Componentes.crearLabel20("Puntos: " + jugador.getSumaMano(), 350, posicionY);
             //Este label es el que indica si gano, perdio o empato
@@ -162,8 +219,8 @@ public class JuegoGrafico {
             panelResultados.getChildren().add(estado);
             posicionY += 50;
         }
-
-        partida.sumarManoDealer(partida.getDealer().getMano(), partida.getDealer());
+        //partida.sumarManoJugadores(partida.getDealer().getManoCartas(),partida.getDealer());
+        partida.sumarValoresManoJugador(partida.getDealer().getMano(), partida.getDealer());
         Label resultadoDealer = Componentes.crearLabel20("Dealer", 150, posicionY + 20);
         Label valorDealer=Componentes.crearLabel20("Puntos: "+partida.getDealer().getSumaMano(),350,posicionY+20);
         panelResultados.getChildren().add(resultadoDealer);
