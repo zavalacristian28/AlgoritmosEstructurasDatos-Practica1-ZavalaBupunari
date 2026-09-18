@@ -68,9 +68,9 @@ public class Partida {
                 Carta carta= mazo.obtenerUnaCarta();
                 //makeFaceUp es para hacerlas visibles para los jugadores
                 carta.makeFaceUp();
-                jugador.getMano().add(carta);
+                //jugador.getMano().add(carta);
                 //ahora se utiliza la pila y su metodo  push para asignar la carta
-                //jugador.getManoCartas().push(carta);
+                jugador.getManoCartas().push(carta);
             }
         }
         // Repartir 2 cartas al dealer
@@ -83,7 +83,7 @@ public class Partida {
             }else{
                 carta.makeFaceUp();
             }
-            dealer.getMano().add(carta);
+            //dealer.getMano().add(carta);
             //Para el dealer tambien se utiliza la pila y el metodo push
             dealer.getManoCartas().push(carta);
         }
@@ -96,8 +96,8 @@ public class Partida {
         for (Jugador jugador : jugadores) {
             System.out.println("\nTurno de " + jugador.getNombre());
             //Este va en la prac2
-            //sumarValoresManoJugador(jugador.getManocartas(),jugador);
-            sumarValoresManoJugador(jugador.getMano(),jugador);
+            sumarManoJugadores(jugador.getManoCartas(),jugador);
+            //sumarValoresManoJugador(jugador.getMano(),jugador);
             boolean jugadorPlantado= false;
 
             //Este ciclo while es el que se encargara se gestionar los movimientos del jugador actual
@@ -125,11 +125,11 @@ public class Partida {
                     nuevaCarta.makeFaceUp();
 
                     //esta linea va para la practica 2
-                    //jugador.getManoCartas().push(nuevaCarta);
-                    jugador.getMano().add(nuevaCarta);
-                    sumarValoresManoJugador(jugador.getMano(),jugador);
+                    jugador.getManoCartas().push(nuevaCarta);
+                    //jugador.getMano().add(nuevaCarta);
+                    //sumarValoresManoJugador(jugador.getMano(),jugador);
                     //Este metodo va para la practica 2
-                    //sumarManoJugadores(jugador.getManoCartas(),jugador);
+                    sumarManoJugadores(jugador.getManoCartas(),jugador);
                 } else{
                     System.out.println(jugador.getNombre() + " se planta.");
                     jugadorPlantado = true;
@@ -139,9 +139,8 @@ public class Partida {
         //a partir de aqui comienza la logica del dealer
         vista.mensajeTurnoDealer();
 
-        /*
-        ========================
-        Estos dos ciclos van ahora en la practica 2, son para voltear las cartas
+
+        //Estos dos ciclos van ahora en la practica 2, son para voltear las cartas
         Pila<Carta> pilaCartasDealerAux=new Pila<>();
 
         while(!dealer.getManoCartas().pilaVacia()){
@@ -153,26 +152,20 @@ public class Partida {
             dealer.getManoCartas().push(pilaCartasDealerAux.pop());
         }
 
-         */
-
-        //Este ciclo voltea las cartas del dealer
-        for (Carta c : dealer.getMano()) {
-            c.makeFaceUp();
-        }
 
         //Aqui se muestran las cartas del dealer
         vista.mostrarCartas(dealer,2);
-        sumarValoresManoJugador(dealer.getMano(),dealer);
+        //sumarValoresManoJugador(dealer.getMano(),dealer);
         //Este metodo va ahora en la practica 2
-        //sumarManoJugadores(dealer.getManoCartas(),dealer);
+        sumarManoJugadores(dealer.getManoCartas(),dealer);
         System.out.println("Valor inicial del dealer: " + dealer.getSumaMano());
 
 
         dealerMenor17(dealer.getMano(), dealer);
         System.out.println("\nCartas finales del dealer:");
         vista.mostrarCartas(dealer,2);
-        sumarValoresManoJugador(dealer.getMano(),dealer);
-        //sumaManoJugadores(dealer.getManoCartas(),dealer);
+        //sumarValoresManoJugador(dealer.getMano(),dealer);
+        sumarManoJugadores(dealer.getManoCartas(),dealer);
         System.out.println("Valor final del dealer: "+ dealer.getSumaMano());
 
         for (Jugador jugador : jugadores) {
@@ -255,11 +248,11 @@ public class Partida {
         while (d.getSumaMano() <17){
             Carta nuevaCarta= mazo.obtenerUnaCarta();
             nuevaCarta.makeFaceUp();
-            //d.getManoCartas.push(nuevaCarta);
-            d.getMano().add(nuevaCarta);
+            d.getManoCartas().push(nuevaCarta);
+            //d.getMano().add(nuevaCarta);
 
-            //sumaManoJugadores(d.getManoCartas(),d);
-            sumarValoresManoJugador(d.getMano(),d);
+            sumarManoJugadores(d.getManoCartas(),d);
+            //sumarValoresManoJugador(d.getMano(),d);
         }
     }
 

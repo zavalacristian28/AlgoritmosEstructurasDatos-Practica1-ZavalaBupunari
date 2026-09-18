@@ -49,7 +49,7 @@ public class Vista {
     public void mensajeDespedida(){
         System.out.println("Saliendo del programa\n");
     }
-
+/*
     public void mostrarCartas( Jugador jd, int n) {
         if(n == 1){
             System.out.println(jd.getNombre() + " estas son tus cartas: ");
@@ -63,10 +63,10 @@ public class Vista {
                 System.out.println(c);
             }
         }
-    }//fin del metodo
+    }//fin del metodo*/
 
     //Metodo actualizado para uso con pilas
-    public void mostrarCartas(Pila<Carta> pilaC, Jugador jd, int n) {
+    public void mostrarCartas( Jugador jd, int n) {
         Pila<Carta> pila=new Pila<>();
         if(n == 1){
             System.out.println(jd.getNombre() + " estas son tus cartas: ");
